@@ -23,9 +23,9 @@ namespace ProjetoInterface
                 double pricePerDay = double.Parse(Console.ReadLine(), CultureInfo.InvariantCulture);
 
                 CarRent carRent = new CarRent(start, finish, new Vehicle(model));
-                RentalService rentalService = new RentalService(pricePerDay, pricePerHour, carRent, new BrazilTaxService());
+                RentalService rentalService = new RentalService(pricePerDay, pricePerHour, new BrazilTaxService());
 
-                carRent.Invoice = new Invoice(rentalService.BasicPayment, rentalService.Tax, rentalService.TotalPayment);
+                rentalService.ProcessInvoice(carRent);
 
                 Console.WriteLine("INVOICE");
                 Console.WriteLine(carRent.Invoice);

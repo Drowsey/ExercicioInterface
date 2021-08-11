@@ -7,45 +7,36 @@ namespace ProjetoInterface.Services
 {
     class RentalService
     {
-        public CarRent CarRent { get; set; }
         public double PricePerHour { get; set; }
         public double PricePerDay { get; set; }
-        public ITaxService TaxService { get; set; }
-        public TimeSpan Duration
-        {
-            get { return CarRent.Finish.Subtract(CarRent.Start); }
-        }
+        public ITaxService _taxService { get; set; }
 
-        public RentalService(double pricePerDay, double pricePerhour, CarRent carRent, ITaxService taxService)
+        public RentalService(double pricePerDay, double pricePerhour, ITaxService taxService)
         {
             PricePerDay = pricePerDay;
             PricePerHour = pricePerhour;
-            CarRent = carRent;
-            TaxService = taxService;
+            _taxService = taxService;
         }
-        public double BasicPayment
+
+        public void ProcessInvoice(CarRent carRent)
         {
-            get
+            TimeSpan duration = carRent.Finish.Subtract(carRent.Start);
+            double basicPayment = 0;
+
+            if (duration.TotalHours <= 12)
             {
-                if (Duration.TotalHours <= 12)
-                {
-                    return PricePerHour * Math.Ceiling(Duration.TotalHours);
-                }
-                else
-                {
-                    return PricePerDay * Math.Ceiling(Duration.TotalDays);
-                }
+                basicPayment = PricePerHour * Math.Ceiling(duration.TotalHours);
             }
-        }
-        public double Tax
-        {
-            get { return TaxService.Tax(BasicPayment); }
-        }
+            else
+            {
+                basicPayment = PricePerDay * Math.Ceiling(duration.TotalDays);
+            }
 
-        public double TotalPayment
-        {
-            get { return BasicPayment + Tax; }
-        }
+            double tax = _taxService.Tax(basicPayment);
 
+            carRent.Invoice = new Invoice(basicPayment, tax);
+
+        }
     }
+
 }

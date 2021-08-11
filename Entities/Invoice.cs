@@ -7,13 +7,15 @@ namespace ProjetoInterface.Entities
     {
         public double BasicPayment { get; set; }
         public double Tax { get; set; }
-        public double TotalPayment { get; set; }
+        public double TotalPayment
+        {
+            get { return BasicPayment + Tax; }
+        }
 
-        public Invoice(double basicPayment, double tax, double totalPayment)
+        public Invoice(double basicPayment, double tax)
         {
             BasicPayment = basicPayment;
             Tax = tax;
-            TotalPayment = totalPayment;
         }
 
         public override string ToString()
